@@ -5,6 +5,8 @@
   "dependencies": {
     "antd-mobile": "^2.1.11",
     "fastclick": "^1.0.6",
+    "nebpay.js": "^0.1.0",
+    "nebulas": "^0.5.0",
     "rc-form": "^2.2.0",
     "react": "^16.4.0",
     "react-dom": "^16.4.0",

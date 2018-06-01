@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { TabBar } from 'antd-mobile';
 import Home from './home';
 import './style.css';
+import addIcon from '../../assets/file-add.svg';
 
 export default class Vote extends Component {
   constructor(props) {
@@ -12,7 +13,7 @@ export default class Vote extends Component {
         fullScreen: true,
     };
   }
-    
+
   renderContent(pageText) {
     return (
       <div style={{ backgroundColor: 'white', height: '100%', textAlign: 'center' }}>
@@ -40,7 +41,7 @@ export default class Vote extends Component {
       </div>
     );
   }
-  
+
   render() {
     return (
       <div style={this.state.fullScreen ? { position: 'fixed', height: '100%', width: '100%', top: 0 } : { height: 400 }}>
@@ -56,7 +57,7 @@ export default class Vote extends Component {
             icon={<div style={{
               width: '22px',
               height: '22px',
-              background: 'url(https://zos.alipayobjects.com/rmsportal/sifuoDUQdAFKAVcFGROC.svg) center center /  21px 21px no-repeat' }}
+              background: `url(${addIcon}) center center /  21px 21px no-repeat` }}
             />
             }
             selectedIcon={<div style={{

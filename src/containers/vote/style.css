@@ -8,3 +8,13 @@
 #tab-bar .demo-preview-item .am-tab-bar {
     background-color: white;
 }
+
+.date-picker-list .am-list-item .am-list-line .am-list-extra {
+    flex-basis: initial;
+}
+
+.addSelect {
+    display: flex;
+    height: 40px;
+    align-items: center;
+}
