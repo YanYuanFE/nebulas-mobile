@@ -41,17 +41,69 @@ class Home extends Component {
   }
 
 	handleReduceOption = (item) => {
+  	console.log(item)
 		const { optionList } = this.state;
 		if (optionList.length === 2) {
 			Toast.info('投票至少需要两个选项!', 1);
     }
-		const newOptions = optionList.filter(option => item === option);
+		const newOptions = optionList.filter(option => item !== option);
 		this.setState({optionList: newOptions});
   }
 
 	handleSubmit = () => {
-
+  	const { optionList, date } = this.state;
+		this.props.form.validateFields((error, values) => {
+			console.log(error, values);
+			if (!error) {
+				const optionArr = optionList.map(item => ({
+					option: values[item],
+					list: []
+				}));
+				const {title, description} = values;
+				const to = this.dappAddress;
+				const value = '0';
+				const callFunc = 'save';
+				const callArgs = JSON.stringify([title, description || '', date, optionArr]);
+				this.serialNumber = nebPay.call(to, value, callFunc, callArgs, {
+					listener: this.cbPush
+				});
+			}
+		});
   }
+
+	cbPush = (res) => {
+		var resObj = res;
+		console.log(`res of push:${JSON.stringify(res)}`);
+		const hash = resObj.txhash;
+		this.timer = setInterval(() => {
+			neb.api.getTransactionReceipt({hash}).then((receipt) => {
+				console.log(receipt);
+				if (receipt.status === 0) {
+					this.message = receipt.execute_error;
+					this.showToast();
+					this.pending = false;
+					clearInterval(this.timer);
+				}
+				if (receipt.status === 2) {
+					this.pending = true;
+				}
+				if (receipt.status === 1) {
+					this.pending = false;
+					clearInterval(this.timer);
+					this.topPopup = true;
+					setTimeout(() => {
+						this.topPopup = false;
+					}, 2000);
+					this.getCompanyList();
+					console.log(this.current);
+					this.getItemDetail(this.current);
+					this.value = '';
+					this.content = '';
+					this.city = '';
+				}
+			});
+		}, 5000);
+	}
 
   render() {
     const { getFieldProps } = this.props.form;
@@ -68,8 +120,6 @@ class Home extends Component {
                 {...getFieldProps('description')}
                 title="补充描述"
                 placeholder="选填"
-                data-seed="logId"
-                ref={el => this.autoFocusInst = el}
                 autoHeight
               />
             </List>
@@ -86,7 +136,7 @@ class Home extends Component {
 			                width: '22px',
 			                height: '22px',
 			                background: `url(${reduceIcon}) center center /  21px 21px no-repeat` }}
-                         onClick={(item) => this.handleReduceOption(item)}
+                         onClick={() => this.handleReduceOption(item)}
 		                />
                   </InputItem>
                 })

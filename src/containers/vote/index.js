@@ -2,13 +2,16 @@ import React, { Component } from 'react';
 import { TabBar } from 'antd-mobile';
 import Home from './home';
 import './style.css';
+import addSelectedIcon from '../../assets/file-add-selcted.svg';
 import addIcon from '../../assets/file-add.svg';
+import listSelectedIcon from '../../assets/tags-selected.svg';
+import listIcon from '../../assets/tags.svg';
 
 export default class Vote extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        selectedTab: 'redTab',
+        selectedTab: 'addTab',
         hidden: false,
         fullScreen: true,
     };
@@ -53,7 +56,7 @@ export default class Vote extends Component {
         >
           <TabBar.Item
             title="新建"
-            key="Life"
+            key="Add"
             icon={<div style={{
               width: '22px',
               height: '22px',
@@ -63,13 +66,13 @@ export default class Vote extends Component {
             selectedIcon={<div style={{
               width: '22px',
               height: '22px',
-              background: 'url(https://zos.alipayobjects.com/rmsportal/iSrlOTqrKddqbOmlvUfq.svg) center center /  21px 21px no-repeat' }}
+              background: `url(${addSelectedIcon}) center center /  21px 21px no-repeat` }}
             />
             }
-            selected={this.state.selectedTab === 'blueTab'}
+            selected={this.state.selectedTab === 'addTab'}
             onPress={() => {
               this.setState({
-                selectedTab: 'blueTab',
+                selectedTab: 'addTab',
               });
             }}
             data-seed="logId"
@@ -81,40 +84,26 @@ export default class Vote extends Component {
               <div style={{
                 width: '22px',
                 height: '22px',
-                background: 'url(https://zos.alipayobjects.com/rmsportal/psUFoAMjkCcjqtUCNPxB.svg) center center /  21px 21px no-repeat' }}
+                background: `url(${listIcon}) center center /  21px 21px no-repeat` }}
               />
             }
             selectedIcon={
               <div style={{
                 width: '22px',
                 height: '22px',
-                background: 'url(https://zos.alipayobjects.com/rmsportal/IIRLrXXrFAhXVdhMWgUI.svg) center center /  21px 21px no-repeat' }}
+                background: `url(${listSelectedIcon}) center center /  21px 21px no-repeat` }}
               />
             }
-            title="Friend"
-            key="Friend"
-            selected={this.state.selectedTab === 'greenTab'}
+            title="列表"
+            key="List"
+            selected={this.state.selectedTab === 'listTab'}
             onPress={() => {
               this.setState({
-                selectedTab: 'greenTab',
+                selectedTab: 'listTab',
               });
             }}
           >
             {this.renderContent('Friend')}
-          </TabBar.Item>
-          <TabBar.Item
-            icon={{ uri: 'https://zos.alipayobjects.com/rmsportal/asJMfBrNqpMMlVpeInPQ.svg' }}
-            selectedIcon={{ uri: 'https://zos.alipayobjects.com/rmsportal/gjpzzcrPMkhfEqgbYvmN.svg' }}
-            title="My"
-            key="my"
-            selected={this.state.selectedTab === 'yellowTab'}
-            onPress={() => {
-              this.setState({
-                selectedTab: 'yellowTab',
-              });
-            }}
-          >
-            {this.renderContent('My')}
           </TabBar.Item>
         </TabBar>
       </div>
