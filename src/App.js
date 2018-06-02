@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  BrowserRouter,
+	HashRouter,
   Route,
   Switch
 } from 'react-router-dom';
@@ -12,13 +12,13 @@ import VoteDetail from './containers/vote/vote';
 class App extends Component {
   render() {
     return (
-      <BrowserRouter>
+      <HashRouter>
             <Switch>
               <Route exact path="/" component={Vote} />
               <Route path="/vote" component={Vote} />
 	            <Route path="/votedetail/:id" component={VoteDetail} />
             </Switch>
-      </BrowserRouter>
+      </HashRouter>
     );
   }
 }
