@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { List, InputItem, WhiteSpace,
   TextareaItem, DatePicker, Button, WingBlank,
-	Toast
+	Toast, ActivityIndicator
 } from 'antd-mobile';
 import { createForm } from 'rc-form';
 import NebPay from 'nebpay.js';
@@ -9,10 +9,10 @@ import Nebulas from 'nebulas';
 import './style.css';
 import addIcon from '../../assets/Add.svg';
 import reduceIcon from '../../assets/reduce.svg';
+import logo from '../../assets/vote.png';
 const nowTimeStamp = Date.now();
 const now = new Date(nowTimeStamp);
 
-const Account = Nebulas.Account;
 const neb = new Nebulas.Neb();
 const nebPay = new NebPay();
 
@@ -24,9 +24,24 @@ class Home extends Component {
       hidden: false,
       fullScreen: true,
       date: now,
-	    optionList: ['option1', 'option2']
+	    optionList: ['option1', 'option2'],
+	    animating: false,
+	    message: '',
     };
+
+    this.net = 'https://mainnet.nebulas.io';
+    this.dappAddress='n1mayin5cM5Tkm7itSLtLHS6UjNHXzpK6fE';
+	  this.pending = false;
+	  this.timeout = 0;
   }
+
+  componentDidMount() {
+	  this.switchNet(this.net);
+  }
+
+	switchNet = (value) => {
+		neb.setRequest(new Nebulas.HttpRequest(value));
+	}
 
   handleClick = () => {
     this.inputRef.focus();
@@ -34,7 +49,7 @@ class Home extends Component {
 
 	addInput = () => {
     const { optionList } = this.state;
-    const len = optionList.length;
+    const len = +optionList[optionList.length - 1].substr(-1, 1);
     const addOption = `option${len + 1}`;
     const newOptions = optionList.concat(addOption);
     this.setState({optionList: newOptions});
@@ -60,56 +75,91 @@ class Home extends Component {
 					list: []
 				}));
 				const {title, description} = values;
+				if (optionArr.length < 2 || !title || !description) {
+					Toast.fail('请输入相关信息!', 1);
+					return;
+				}
 				const to = this.dappAddress;
 				const value = '0';
-				const callFunc = 'save';
+				const callFunc = 'create';
 				const callArgs = JSON.stringify([title, description || '', date, optionArr]);
 				this.serialNumber = nebPay.call(to, value, callFunc, callArgs, {
 					listener: this.cbPush
 				});
+				this.queryTimer = setInterval(() => {
+					this.queryInterval();
+				}, 10000);
 			}
 		});
   }
 
 	cbPush = (res) => {
-		var resObj = res;
+		const resObj = res;
 		console.log(`res of push:${JSON.stringify(res)}`);
 		const hash = resObj.txhash;
-		this.timer = setInterval(() => {
-			neb.api.getTransactionReceipt({hash}).then((receipt) => {
-				console.log(receipt);
-				if (receipt.status === 0) {
-					this.message = receipt.execute_error;
-					this.showToast();
+		if (!hash) {
+			this.toggleToast(false, '');
+			Toast.fail('取消交易!!', 1);
+			clearInterval(this.queryTimer);
+		}
+	}
+
+	queryInterval () {
+  	if (!this.serialNumber) return;
+		if(!this.pending) {
+			this.toggleToast(true, '正在查询交易，请等待！');
+		}
+		// if (this.timeout > 1) {
+		// 	this.toggleToast(false, '');
+		// 	Toast.fail('取消交易!!', 1);
+		// 	clearInterval(this.queryTimer);
+		// }
+		this.pending = true;
+		nebPay.queryPayInfo(this.serialNumber)
+			.then(res => {
+				console.log(`tx result: ${res}`);
+				const resObj = JSON.parse(res);
+				console.log('serialNumber', resObj);
+				if (resObj.code === 0 && resObj.data.status === 1) {
+					Toast.success('操作成功 !!!', 1);
 					this.pending = false;
-					clearInterval(this.timer);
+					this.toggleToast(false, '');
+					clearInterval(this.queryTimer);
+					this.props.getVoteList();
+					this.props.form.resetFields();
 				}
-				if (receipt.status === 2) {
-					this.pending = true;
+				if (resObj.code === 1) {
+					this.timeout += 1;
 				}
-				if (receipt.status === 1) {
-					this.pending = false;
-					clearInterval(this.timer);
-					this.topPopup = true;
-					setTimeout(() => {
-						this.topPopup = false;
-					}, 2000);
-					this.getCompanyList();
-					console.log(this.current);
-					this.getItemDetail(this.current);
-					this.value = '';
-					this.content = '';
-					this.city = '';
-				}
+			})
+			.catch(function (err) {
+				console.log('err', err);
+				clearInterval(this.queryTimer);
 			});
-		}, 5000);
+	}
+
+	toggleToast = (animating, message) => {
+		this.setState({ animating, message});
 	}
 
   render() {
     const { getFieldProps } = this.props.form;
-    const {optionList} = this.state;
+    const {optionList, message} = this.state;
     return (
           <div>
+	          <WhiteSpace />
+	          <WingBlank>
+		          <div style={{display: 'flex'}}>
+			          <img src={logo} alt="" className="logo"/>
+			          <h3 style={{marginLeft: '10px'}}>NAS轻投票</h3>
+		          </div>
+	          </WingBlank>
+	          <WhiteSpace />
+	          <ActivityIndicator
+		          toast
+		          text={message || 'Loading...'}
+		          animating={this.state.animating}
+	          />
             <List renderHeader={() => '新建投票'}>
               <InputItem
                 {...getFieldProps('title')}
