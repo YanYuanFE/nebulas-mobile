@@ -14,7 +14,6 @@ class VoteList extends Component {
 
 	render() {
 		const {list} = this.props;
-		console.log(list);
 		return (
 			<div>
 				<List renderHeader={() => '投票列表'} className="my-list">

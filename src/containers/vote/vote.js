@@ -138,8 +138,7 @@ class Vote extends Component {
 		let all = 0;
 		detail.data && detail.data.forEach(item => {
 			all += item.list.length;
-		})
-		console.log(all)
+		});
 		return (
 			<div>
 				<ActivityIndicator
@@ -171,7 +170,7 @@ class Vote extends Component {
 								extra={`${item.list.length}票  ${all && parseInt(item.list.length * 100/all, 10)}%`}
 							>
 								{item.option}
-								<Brief>{item.list.join('、')}</Brief>
+								<Brief>{item.list.map(item => <React.Fragment>{item}<br/></React.Fragment>)}</Brief>
 							</Item>
 						})
 					}
