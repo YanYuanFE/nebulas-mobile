@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom'
 import moment from 'moment';
 import NebPay from 'nebpay.js';
 import Nebulas from 'nebulas';
+import {isPC } from '../../utils/utils';
 import './style.css';
 
 
@@ -72,54 +73,75 @@ class Vote extends Component {
 			Toast.fail('投票已截止!', 1);
 			return;
 		}
-		const to = this.dappAddress;
+		// const to = this.dappAddress;
 		const value = '0';
 		const callFunc = 'vote';
 		const callArgs = JSON.stringify([id, option]);
-		this.serialNumber = nebPay.call(to, value, callFunc, callArgs, {
-			listener: this.cbPush
-		});
-		this.queryTimer = setInterval(() => {
-			this.queryInterval();
-		}, 10000);
-	}
-
-	cbPush = (res) => {
-		const resObj = res;
-		console.log(`res of push:${JSON.stringify(res)}`);
-		const hash = resObj.txhash;
-		if (!hash) {
+		this.nebPayCall(callFunc, callArgs, value, () => {
+			this.toggleToast(true, '正在查询交易，请稍等！');
+		}, () => {
 			this.toggleToast(false, '');
-			Toast.fail('取消交易!!', 1);
-			clearInterval(this.queryTimer);
-		}
+			Toast.success('操作成功!', 1);
+			this.getVoteById();
+		})
 	}
 
-	queryInterval () {
-		if (!this.serialNumber) return;
-		if(!this.pending) {
-			this.toggleToast(true, '正在查询交易，请等待！');
+	queryByHash = (hash, successCb) => {
+		neb.api.getTransactionReceipt({hash}).then((receipt) => {
+			console.log(receipt);
+			if (receipt.status === 0) {
+				this.message = receipt.execute_error;
+				this.pending = false;
+				clearInterval(this.timer);
+			}
+			if (receipt.status === 2) {
+				this.pending = true;
+			}
+			if (receipt.status === 1) {
+				this.pending = false;
+				clearInterval(this.timer);
+				successCb(receipt);
+				console.log(this.timer);
+			}
+		});
+	}
+
+	nebPayCall = (() => {
+		return (callFunc, callArgs, value, cb, successCb) => {
+			this.serialNumber = nebPay.call(this.dappAddress, value, callFunc, callArgs, {
+				listener: (res) => {
+					if (!isPC()) {
+						return;
+					}
+					if (res.txhash) {
+						const hash = res.txhash;
+						this.timer = setInterval(() => {
+							this.queryByHash(hash, successCb);
+						}, 5000)
+					}
+				}
+			});
+			if (!isPC()) {
+				const queryTimer = setInterval(() => {
+					const queryCb = (data) => {
+						clearInterval(queryTimer);
+						cb(data.hash);
+						this.timer = setInterval(() => this.queryByHash(data.hash, successCb), 5000)
+					}
+					this.queryInterval(queryCb);
+				}, 3000);
+			}
 		}
-		// if (this.timeout > 1) {
-		// 	this.toggleToast(false, '');
-		// 	Toast.fail('取消交易!!', 1);
-		// 	clearInterval(this.queryTimer);
-		// }
-		this.pending = true;
+	})()
+
+	queryInterval = (cb) => {
 		nebPay.queryPayInfo(this.serialNumber)
 			.then(res => {
 				console.log(`tx result: ${res}`);
 				const resObj = JSON.parse(res);
 				console.log(resObj);
-				if (resObj.code === 0 && resObj.data.status === 1) {
-					Toast.success('操作成功 !!!', 1);
-					this.pending = false;
-					this.toggleToast(false, '');
-					this.getVoteById();
-					clearInterval(this.queryTimer);
-				}
-				if (resObj.code === 1) {
-					this.timeout += 1;
+				if (resObj.msg === 'success') {
+					cb && cb(resObj.data);
 				}
 			})
 			.catch(function (err) {
@@ -128,13 +150,48 @@ class Vote extends Component {
 			});
 	}
 
+	cbPush = (res) => {
+		const resObj = res;
+		console.log(`res of push:${JSON.stringify(res)}`);
+		const hash = resObj.txhash;
+		console.error('timer', this.timer, this.queryTimer);
+		if (!hash) {
+			this.toggleToast(false, '');
+			Toast.fail('取消交易!!', 1);
+			return;
+		}
+		if (!isPC()) {
+			return;
+		}
+		console.error('timer', this.timer, this.queryTimer);
+		this.timer = setInterval(() => {
+			neb.api.getTransactionReceipt({hash}).then((receipt) => {
+				console.log(receipt);
+				if (receipt.status === 0) {
+					this.message = receipt.execute_error;
+					this.pending = false;
+					clearInterval(this.timer);
+				}
+				if (receipt.status === 2) {
+					this.pending = true;
+				}
+				if (receipt.status === 1) {
+					this.pending = false;
+					Toast.success('操作成功 !!!', 1);
+					clearInterval(this.timer);
+					this.queryTimer && clearInterval(this.queryTimer);
+					this.getVoteById();
+				}
+			});
+		}, 10000);
+	}
+
 	toggleToast = (animating, message) => {
 		this.setState({ animating, message});
 	}
 
 	render() {
 		const {detail, message} = this.state;
-		console.log(detail);
 		let all = 0;
 		detail.data && detail.data.forEach(item => {
 			all += item.list.length;

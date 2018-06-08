@@ -10,6 +10,7 @@ import './style.css';
 import addIcon from '../../assets/Add.svg';
 import reduceIcon from '../../assets/reduce.svg';
 import logo from '../../assets/vote.png';
+import {isPC} from "../../utils/utils";
 const nowTimeStamp = Date.now();
 const now = new Date(nowTimeStamp);
 
@@ -79,57 +80,77 @@ class Home extends Component {
 					Toast.fail('请输入相关信息!', 1);
 					return;
 				}
-				const to = this.dappAddress;
+				// const to = this.dappAddress;
 				const value = '0';
 				const callFunc = 'create';
 				const callArgs = JSON.stringify([title, description || '', date, optionArr]);
-				this.serialNumber = nebPay.call(to, value, callFunc, callArgs, {
-					listener: this.cbPush
-				});
-				this.queryTimer = setInterval(() => {
-					this.queryInterval();
-				}, 10000);
+				this.nebPayCall(callFunc, callArgs, value, () => {
+					this.toggleToast(true, '正在查询交易，请稍等！');
+				}, () => {
+					this.toggleToast(false, '');
+					Toast.success('操作成功 !!!', 1);
+					this.props.getVoteList();
+					this.props.form.resetFields();
+				})
 			}
 		});
   }
 
-	cbPush = (res) => {
-		const resObj = res;
-		console.log(`res of push:${JSON.stringify(res)}`);
-		const hash = resObj.txhash;
-		if (!hash) {
-			this.toggleToast(false, '');
-			Toast.fail('取消交易!!', 1);
-			clearInterval(this.queryTimer);
-		}
+	queryByHash = (hash, successCb) => {
+		neb.api.getTransactionReceipt({hash}).then((receipt) => {
+			console.log(receipt);
+			if (receipt.status === 0) {
+				this.message = receipt.execute_error;
+				this.pending = false;
+				clearInterval(this.timer);
+			}
+			if (receipt.status === 2) {
+				this.pending = true;
+			}
+			if (receipt.status === 1) {
+				this.pending = false;
+				clearInterval(this.timer);
+				successCb(receipt);
+			}
+		});
 	}
 
-	queryInterval () {
-  	if (!this.serialNumber) return;
-		if(!this.pending) {
-			this.toggleToast(true, '正在查询交易，请等待！');
+	nebPayCall = (() => {
+		return (callFunc, callArgs, value, cb, successCb) => {
+			this.serialNumber = nebPay.call(this.dappAddress, value, callFunc, callArgs, {
+				listener: (res) => {
+					if (!isPC()) {
+						return;
+					}
+					if (res.txhash) {
+						const hash = res.txhash;
+						this.timer = setInterval(() => {
+							this.queryByHash(hash, successCb);
+						}, 5000)
+					}
+				}
+			});
+			if (!isPC()) {
+				const queryTimer = setInterval(() => {
+					const queryCb = (data) => {
+						clearInterval(queryTimer);
+						cb(data.hash);
+						this.timer = setInterval(() => this.queryByHash(data.hash, successCb), 5000)
+					}
+					this.queryInterval(queryCb);
+				}, 3000);
+			}
 		}
-		// if (this.timeout > 1) {
-		// 	this.toggleToast(false, '');
-		// 	Toast.fail('取消交易!!', 1);
-		// 	clearInterval(this.queryTimer);
-		// }
-		this.pending = true;
+	})()
+
+	queryInterval = (cb) => {
 		nebPay.queryPayInfo(this.serialNumber)
 			.then(res => {
 				console.log(`tx result: ${res}`);
 				const resObj = JSON.parse(res);
-				console.log('serialNumber', resObj);
-				if (resObj.code === 0 && resObj.data.status === 1) {
-					Toast.success('操作成功 !!!', 1);
-					this.pending = false;
-					this.toggleToast(false, '');
-					clearInterval(this.queryTimer);
-					this.props.getVoteList();
-					this.props.form.resetFields();
-				}
-				if (resObj.code === 1) {
-					this.timeout += 1;
+				console.log(resObj);
+				if (resObj.msg === 'success') {
+					cb && cb(resObj.data);
 				}
 			})
 			.catch(function (err) {
