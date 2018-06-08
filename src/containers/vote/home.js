@@ -109,6 +109,7 @@ class Home extends Component {
 			}
 			if (receipt.status === 1) {
 				this.pending = false;
+				console.error('clear', this.timer);
 				clearInterval(this.timer);
 				successCb(receipt);
 			}
@@ -126,6 +127,7 @@ class Home extends Component {
 						const hash = res.txhash;
 						this.timer = setInterval(() => {
 							this.queryByHash(hash, successCb);
+							console.error('timer', this.timer);
 						}, 5000)
 					}
 				}
@@ -135,7 +137,10 @@ class Home extends Component {
 					const queryCb = (data) => {
 						clearInterval(queryTimer);
 						cb(data.hash);
-						this.timer = setInterval(() => this.queryByHash(data.hash, successCb), 5000)
+						this.timer = setInterval(() => {
+							console.error('timer', this.timer);
+							this.queryByHash(data.hash, successCb);
+						}, 5000)
 					}
 					this.queryInterval(queryCb);
 				}, 3000);
