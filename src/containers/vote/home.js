@@ -76,7 +76,7 @@ class Home extends Component {
 					list: []
 				}));
 				const {title, description} = values;
-				if (optionArr.length < 2 || !title || !description) {
+				if (optionArr.length < 2 || !title) {
 					Toast.fail('请输入相关信息!', 1);
 					return;
 				}
