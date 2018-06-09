@@ -9,7 +9,7 @@ import {
 } from 'antd-mobile';
 // import VConsole from 'vconsole';
 import './App.css';
-import DashBoard from './containers/dashboard';
+// import DashBoard from './containers/dashboard';
 import Vote from './containers/vote';
 import Coin from './containers/coin';
 import VoteDetail from './containers/vote/vote';

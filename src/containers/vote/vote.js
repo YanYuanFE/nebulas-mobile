@@ -126,7 +126,9 @@ class Vote extends Component {
 					const queryCb = (data) => {
 						clearInterval(queryTimer);
 						cb(data.hash);
-						this.timer = setInterval(() => this.queryByHash(data.hash, successCb), 5000)
+						this.timer = setInterval(() => {
+							this.queryByHash(data.hash, successCb)
+						}, 5000)
 					}
 					this.queryInterval(queryCb);
 				}, 3000);

@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { List, WhiteSpace,
-	Toast, ActivityIndicator
+	Toast, ActivityIndicator,
+	WingBlank, Button,TextareaItem
 } from 'antd-mobile';
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom';
+import { createForm } from 'rc-form';
 import moment from 'moment';
 import NebPay from 'nebpay.js';
 import Nebulas from 'nebulas';
@@ -68,24 +70,6 @@ class CoinDetail extends Component {
 		neb.setRequest(new Nebulas.HttpRequest(value));
 	}
 
-	vote = (id, { option }, date) => {
-		if (!moment().isBefore(date)) {
-			Toast.fail('投票已截止!', 1);
-			return;
-		}
-		// const to = this.dappAddress;
-		const value = '0';
-		const callFunc = 'vote';
-		const callArgs = JSON.stringify([id, option]);
-		this.nebPayCall(callFunc, callArgs, value, () => {
-			this.toggleToast(true, '正在查询交易，请稍等！');
-		}, () => {
-			this.toggleToast(false, '');
-			Toast.success('操作成功!', 1);
-			this.getVoteById();
-		})
-	}
-
 	queryByHash = (hash, successCb) => {
 		neb.api.getTransactionReceipt({hash}).then((receipt) => {
 			console.log(receipt);
@@ -126,7 +110,9 @@ class CoinDetail extends Component {
 					const queryCb = (data) => {
 						clearInterval(queryTimer);
 						cb(data.hash);
-						this.timer = setInterval(() => this.queryByHash(data.hash, successCb), 5000)
+						this.timer = setInterval(() => {
+              this.queryByHash(data.hash, successCb)
+            }, 5000)
 					}
 					this.queryInterval(queryCb);
 				}, 3000);
@@ -152,10 +138,58 @@ class CoinDetail extends Component {
 
 	toggleToast = (animating, message) => {
 		this.setState({ animating, message});
-	}
+  }
+  
+  onSubmit = () => {
+    const { match } = this.props;
+		const { name } = match.params;
+    this.props.form.validateFields((error, values) => {
+			console.log(error, values);
+			if (!error) {
+        const {remark} = values;
+				if (remark.trim() === '') {
+					Toast.fail('请输入评论!', 1);
+					return;
+        }
+        const nowTimeStamp = Date.now();
+        const now = new Date(nowTimeStamp);
+        const comment = {
+          remark: remark.trim(),
+          date: moment(now).format('YYYY-MM-DD HH:mm:ss')
+        }
+				const value = '0';
+				const callFunc = 'comment';
+				const callArgs = JSON.stringify([name, comment]);
+				this.nebPayCall(callFunc, callArgs, value, () => {
+					this.toggleToast(true, '正在查询交易，请稍等！');
+				}, () => {
+					this.toggleToast(false, '');
+					Toast.success('操作成功 !!!', 1);
+					this.getCoinByName();
+					this.props.form.resetFields();
+        })
+      }
+    })
+  }
+  
+  toggleLike = (isLike) => {
+    const { match } = this.props;
+    const { name } = match.params;
+    const value = '0';
+    const callFunc = 'toggleAgree';
+    const callArgs = JSON.stringify([name, isLike]);
+    this.nebPayCall(callFunc, callArgs, value, () => {
+      this.toggleToast(true, '正在查询交易，请稍等！');
+    }, () => {
+      this.toggleToast(false, '');
+      Toast.success('成功!', 1);
+      this.getCoinByName();
+    })
+  }
 
 	render() {
-		const {detail, message} = this.state;
+    const {detail, message} = this.state;
+    const { getFieldProps } = this.props.form;
 		console.log(detail)
 
 		return (
@@ -179,6 +213,46 @@ class CoinDetail extends Component {
 						</Item>
 					}
 				</List>
+				<WhiteSpace size="lg" />
+				<WingBlank>
+					<div style={{display: 'flex'}}>
+            <Button
+              onClick={() => this.toggleLike(true)}
+              style={{ marginRight: '10px', padding: '0 10px' }}
+              icon={<img src={require('../../assets/like.png')} alt="like"/>}
+            >
+              {detail.agree && detail.agree.length}
+            </Button>
+            <Button
+              onClick={() => this.toggleLike(false)}
+              style={{ padding: '0 10px' }}
+              icon={<img src={require('../../assets/dislike.png')} alt="dislike"/>}>
+              {detail.disagree && detail.disagree.length}
+            </Button>
+          </div>
+				</WingBlank>
+        <List renderHeader={() => '评论'} className="my-list">
+          {
+            (detail.comments || []).map(item => {
+              return <Item multipleLine extra={item.date} key={item.date}>
+                {item.remark} <Brief>By: {item.author}</Brief>
+              </Item>
+            })
+          }
+        </List>
+        <List renderHeader={() => '你怎么看'}>
+          <TextareaItem
+            placeholder='我的意见是...'
+            {...getFieldProps('remark', {
+              initialValue: '',
+            })}
+            rows={3}
+            count={100}
+          />
+          <Item>
+            <Button type="primary" size="small" inline onClick={this.onSubmit}>提交</Button>
+          </Item>
+        </List>
 
 
 
@@ -193,4 +267,4 @@ class CoinDetail extends Component {
 	}
 }
 
-export default  CoinDetail;
+export default  createForm()(CoinDetail);

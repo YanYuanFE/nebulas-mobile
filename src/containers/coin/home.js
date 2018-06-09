@@ -9,8 +9,6 @@ import Nebulas from 'nebulas';
 import './style.css';
 import logo from '../../assets/bitcoin.png';
 import {isPC} from "../../utils/utils";
-const nowTimeStamp = Date.now();
-const now = new Date(nowTimeStamp);
 
 const neb = new Nebulas.Neb();
 const nebPay = new NebPay();
@@ -76,7 +74,7 @@ class Home extends Component {
 					this.toggleToast(true, '正在查询交易，请稍等！');
 				}, () => {
 					this.toggleToast(false, '');
-					Toast.success('操作成功 !!!', 1);
+					Toast.success('成功!', 1);
 					this.props.getCoinList();
 					this.props.form.resetFields();
 				})

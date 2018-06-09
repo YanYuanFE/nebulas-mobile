@@ -27,25 +27,19 @@ class About extends Component {
 					<Item
 						multipleLine
 					>
-						2、投票需要消耗NAS吗？
-						<Brief>NO，投票只需要消耗少量gas，<br /> 请保证钱包内有少量NAS。</Brief>
+						2、币圈值得买是做什么的？
+						<Brief>币圈值得买为推荐价值币种而生，<br />每个人都可以推荐价值币，用户可以通过点赞<br />或者反对，还可以评论分析，<br />评选出用户心中的价值币。</Brief>
 					</Item>
 					<Item
 						multipleLine
 					>
-						3、投票只支持单选吗？
-						<Brief>是的，目前只支持单选，<br />后续可能增加多选。</Brief>
+						3、使用需要消耗NAS吗？
+						<Brief>NO，使用只需要消耗少量gas作为手续费，<br /> 请保证钱包内有少量NAS。</Brief>
 					</Item>
 					<Item
 						multipleLine
 					>
-						5、如何参与投票？
-						<Brief>点击首页中间Tab进入投票列表页，<br />点击对应的投票进入，点击相应的选项即可投票，<br />每项投票每人只能投一票。</Brief>
-					</Item>
-					<Item
-						multipleLine
-					>
-						6、联系作者
+						4、联系作者
 						<Brief>微信： yanyuan950414，欢迎提交反馈</Brief>
 					</Item>
 				</List>
