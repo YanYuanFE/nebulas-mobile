@@ -100,6 +100,7 @@ class Vote extends Component {
 			if (receipt.status === 1) {
 				this.pending = false;
 				clearInterval(this.timer);
+				this.timer = null;
 				successCb(receipt);
 				console.log(this.timer);
 			}
@@ -148,7 +149,6 @@ class Vote extends Component {
 			})
 			.catch(function (err) {
 				console.log('err', err);
-				clearInterval(this.queryTimer);
 			});
 	}
 

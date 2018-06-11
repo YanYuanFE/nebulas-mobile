@@ -111,6 +111,7 @@ class Home extends Component {
 				this.pending = false;
 				console.error('clear', this.timer);
 				clearInterval(this.timer);
+				this.timer = null;
 				successCb(receipt);
 			}
 		});
@@ -160,7 +161,6 @@ class Home extends Component {
 			})
 			.catch(function (err) {
 				console.log('err', err);
-				clearInterval(this.queryTimer);
 			});
 	}
 

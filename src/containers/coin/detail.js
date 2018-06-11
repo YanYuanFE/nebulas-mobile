@@ -85,6 +85,7 @@ class CoinDetail extends Component {
 				this.pending = false;
 				clearInterval(this.timer);
 				successCb(receipt);
+				this.timer = null;
 				console.log(this.timer);
 			}
 		});
@@ -132,7 +133,6 @@ class CoinDetail extends Component {
 			})
 			.catch(function (err) {
 				console.log('err', err);
-				clearInterval(this.queryTimer);
 			});
 	}
 
