@@ -17,18 +17,23 @@ class About extends Component {
 			<div>
 				<List renderHeader={() => '使用说明'} className="my-list">
 					<Item
+						multipleLine
+					>
+						1、什么是币圈值得买？
+						<Brief>币圈值得买为推荐价值币种而生，
+							<br />每个人都可以推荐价值币，用户可以通过点赞
+							<br />或者反对，还可以评论分析，
+							<br />评选出用户心中的价值币，
+							<br />远离割韭菜。
+						</Brief>
+					</Item>
+					<Item
 						arrow="horizontal"
 						multipleLine
 						onClick={() => this.download()}
 					>
-						1、使用前需要准备什么？
+						2、使用前需要准备什么？
 						<Brief>手机端需要安装星云钱包APP，点击去下载。</Brief>
-					</Item>
-					<Item
-						multipleLine
-					>
-						2、币圈值得买是做什么的？
-						<Brief>币圈值得买为推荐价值币种而生，<br />每个人都可以推荐价值币，用户可以通过点赞<br />或者反对，还可以评论分析，<br />评选出用户心中的价值币。</Brief>
 					</Item>
 					<Item
 						multipleLine
