@@ -10,10 +10,11 @@ import {
 // import VConsole from 'vconsole';
 import './App.css';
 // import DashBoard from './containers/dashboard';
-import Vote from './containers/vote';
-import Coin from './containers/coin';
-import VoteDetail from './containers/vote/vote';
-import CoinDetail from './containers/coin/detail';
+// import Vote from './containers/vote';
+// import Coin from './containers/coin';
+// import VoteDetail from './containers/vote/vote';
+// import CoinDetail from './containers/coin/detail';
+import Routes from './router';
 // const vConsole = new VConsole();
 const {alert} = Modal;
 
@@ -47,11 +48,11 @@ class App extends Component {
     return (
       <HashRouter>
         <Switch>
-          <Route exact path="/" component={Vote} />
-          <Route path="/vote" component={Vote} />
-          <Route path="/votedetail/:id" component={VoteDetail} />
-	        <Route path="/coin" component={Coin} />
-	        <Route path="/coindetail/:name" component={CoinDetail} />
+	        {
+		        Routes.map(({name, path, exact = true, component }) => (
+			        <Route path={path} exact={exact} component={component} key={name} />
+		        ))
+	        }
         </Switch>
       </HashRouter>
     );
