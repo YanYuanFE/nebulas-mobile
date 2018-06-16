@@ -1,0 +1,83 @@
+#tab-bar.demo {
+    display: flex;
+    flex-direction: column;
+}
+#tab-bar .demoName {
+    height: 40px;
+}
+#tab-bar .demo-preview-item .am-tab-bar {
+    background-color: white;
+}
+
+.date-picker-list .am-list-item .am-list-line .am-list-extra {
+    flex-basis: initial;
+}
+
+.addSelect {
+    display: flex;
+    height: 40px;
+    align-items: center;
+}
+
+.name {
+    font-size: 19px;
+    color: #404040;
+    padding: 21px 0 21px 15px;
+    text-align: left;
+    height: 20px;
+}
+
+.name .icon {
+    display: inline-block;
+    width: 19px;
+    height: 19px;
+    background-image: url('../../assets/home.png');
+    background-size: cover;
+    vertical-align: -1px;
+    margin-right: 30px;
+    position: relative;
+}
+
+.name .icon:after {
+    content: "";
+    position: absolute;
+    top: 2.5px;
+    right: -15px;
+    width: 1px;
+    height: 15px;
+    background-color: #ceced1;
+}
+
+.align {
+    display: flex;
+    flex-direction: column;
+}
+
+.date {
+    padding: 15px 15px 9px 15px;
+    font-size: 14px;
+    color: #888;
+}
+
+.logo {
+    width: 35px;
+    height: 35px;
+}
+
+.token-footer {
+    display: flex;
+    align-items: center;
+}
+
+.token-footer span{
+    padding-left: 10px;
+}
+
+.like-btn {
+    border: none;
+    justify-content: flex-start;
+    width: 55px;
+}
+html:not([data-scale]) .like-btn::before {
+    border: none;
+}
