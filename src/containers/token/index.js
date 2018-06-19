@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { TabBar } from 'antd-mobile';
+import { TabBar, ActivityIndicator } from 'antd-mobile';
 import Nebulas from 'nebulas';
 import Home from './home';
 import List from './list';
@@ -11,6 +11,7 @@ import listSelectedIcon from '../../assets/browser-selected.png';
 import listIcon from '../../assets/browser.png';
 import helpSelectedIcon from '../../assets/about-selected.png';
 import helpIcon from '../../assets/about.png';
+import {Toast} from "antd-mobile/lib/index";
 
 const Account = Nebulas.Account;
 const neb = new Nebulas.Neb();
@@ -19,10 +20,12 @@ export default class Token extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        selectedTab: 'addTab',
-        hidden: false,
-        fullScreen: true,
-        list: []
+      selectedTab: 'addTab',
+      hidden: false,
+      fullScreen: true,
+      list: [],
+	    animating: false,
+	    message: '',
     };
 
 	  this.net = 'https://mainnet.nebulas.io';
@@ -46,6 +49,7 @@ export default class Token extends Component {
 			function: callFunc,
 			args: callArgs
 		};
+		this.toggleToast(true, '正在从区块链上获取数据，请稍等！');
 		neb.api.call(from, this.dappAddress, value, nonce, gasPrice, gasLimit, contract).then((res) => {
 			let result = res.result;
 			if (result === 'null') {
@@ -54,17 +58,30 @@ export default class Token extends Component {
 			}
 			result = JSON.parse(result);
 			this.setState({list: result});
-		}).catch(err => console.log(`error:${err}`));
+			this.toggleToast(false);
+		}).catch(err => {
+			Toast.fail(`error:${err}，请重试`, 2);
+			this.toggleToast(false);
+		});
 	}
 
 	switchNet = (value) => {
 		neb.setRequest(new Nebulas.HttpRequest(value));
 	}
 
+	toggleToast = (animating, message) => {
+		this.setState({ animating, message});
+	}
+
   render() {
-	  const {list} = this.state;
+	  const {list, message } = this.state;
     return (
       <div style={this.state.fullScreen ? { position: 'fixed', height: '100%', width: '100%', top: 0 } : { height: 400 }}>
+	      <ActivityIndicator
+		      toast
+		      text={message || 'Loading...'}
+		      animating={this.state.animating}
+	      />
         <TabBar
           unselectedTintColor="#949494"
           tintColor="#33A3F4"

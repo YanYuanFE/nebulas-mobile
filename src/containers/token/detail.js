@@ -63,7 +63,10 @@ class Detail extends Component {
 			result = JSON.parse(result);
 			this.setState({detail: result});
 			this.toggleToast(false);
-		}).catch(err => console.log(`error:${err}`));
+		}).catch(err => {
+			Toast.fail(`error:${err}，请重试`, 2);
+			this.toggleToast(false);
+		});
 	}
 
 	switchNet = (value) => {
