@@ -150,6 +150,7 @@ class Detail extends Component {
 					}
 					if (res.txhash) {
 						const hash = res.txhash;
+						if (this.timer) return;
 						this.timer = setInterval(() => {
 							this.queryByHash(hash, successCb);
 						}, 5000)
@@ -161,6 +162,7 @@ class Detail extends Component {
 					const queryCb = (data) => {
 						clearInterval(queryTimer);
 						cb(data.hash);
+						if (this.timer) return;
 						this.timer = setInterval(() => {
 							this.queryByHash(data.hash, successCb)
 						}, 5000)
@@ -190,7 +192,6 @@ class Detail extends Component {
 		const resObj = res;
 		console.log(`res of push:${JSON.stringify(res)}`);
 		const hash = resObj.txhash;
-		console.error('timer', this.timer, this.queryTimer);
 		if (!hash) {
 			this.toggleToast(false, '');
 			Toast.fail('取消交易!!', 1);
@@ -199,7 +200,7 @@ class Detail extends Component {
 		if (!isPC()) {
 			return;
 		}
-		console.error('timer', this.timer, this.queryTimer);
+		if (this.timer) return;
 		this.timer = setInterval(() => {
 			neb.api.getTransactionReceipt({hash}).then((receipt) => {
 				console.log(receipt);
@@ -215,7 +216,6 @@ class Detail extends Component {
 					this.pending = false;
 					Toast.success('操作成功 !!!', 1);
 					clearInterval(this.timer);
-					this.queryTimer && clearInterval(this.queryTimer);
 					this.getVoteById();
 				}
 			});

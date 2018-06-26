@@ -150,6 +150,7 @@ class Home extends Component {
 					}
 					if (res.txhash) {
 						const hash = res.txhash;
+						if (this.timer) return;
 						this.timer = setInterval(() => {
 							this.queryByHash(hash, successCb);
 							console.error('timer', this.timer);
@@ -162,6 +163,7 @@ class Home extends Component {
 					const queryCb = (data) => {
 						clearInterval(queryTimer);
 						cb(data.hash);
+						if (this.timer) return;
 						this.timer = setInterval(() => {
 							console.error('timer', this.timer);
 							this.queryByHash(data.hash, successCb);
