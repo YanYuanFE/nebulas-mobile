@@ -43,4 +43,22 @@ export default [
 		path: '/tokendetail/:name',
 		component: AsyncComponent(() => import('./containers/token/detail'))
 	},
+	{
+		name: 'Phone',
+		icon: 'phone',
+		path: '/phone',
+		component: AsyncComponent(() => import('./containers/phone'))
+	},
+	{
+		name: 'PhoneEdit',
+		icon: 'phoneEdit',
+		path: '/phone/edit',
+		component: AsyncComponent(() => import('./containers/phone/edit'))
+	},
+	{
+		name: 'PhoneList',
+		icon: 'phoneList',
+		path: '/phone/list',
+		component: AsyncComponent(() => import('./containers/phone/list'))
+	},
 ]

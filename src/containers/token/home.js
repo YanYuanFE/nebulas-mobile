@@ -9,7 +9,7 @@ import { createForm } from 'rc-form';
 import NebPay from 'nebpay.js';
 import Nebulas from 'nebulas';
 import './style.css';
-import logo from '../../assets/token.png';
+import logo from '../../assets/token.svg';
 import {isPC} from "../../utils/utils";
 const STATICDOMAIN = 'http://o9qn9041y.bkt.clouddn.com/';
 

@@ -5,12 +5,12 @@ import Home from './home';
 import List from './list';
 import About from './about';
 import './style.css';
-import addSelectedIcon from '../../assets/token-edit-selected.png';
-import addIcon from '../../assets/token-edit.png';
-import listSelectedIcon from '../../assets/browser-selected.png';
-import listIcon from '../../assets/browser.png';
-import helpSelectedIcon from '../../assets/about-selected.png';
-import helpIcon from '../../assets/about.png';
+import addSelectedIcon from '../../assets/token-edit-selected.svg';
+import addIcon from '../../assets/token-edit.svg';
+import listSelectedIcon from '../../assets/browser-selected.svg';
+import listIcon from '../../assets/browser.svg';
+import helpSelectedIcon from '../../assets/about-selected.svg';
+import helpIcon from '../../assets/about.svg';
 import {Toast} from "antd-mobile/lib/index";
 
 const Account = Nebulas.Account;

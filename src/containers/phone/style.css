@@ -1,0 +1,36 @@
+.phone-content {
+    background-color: #dfdfdf;
+    height: calc(100% - 45px);
+}
+
+.phone-img {
+    width: 50%;
+}
+
+.phone-content .am-search {
+    background-color: transparent;
+}
+
+.phone-content .am-search-input {
+    height: 40px;
+}
+
+.phone-content .am-search-input .am-search-synthetic-ph {
+    height: 40px;
+    line-height: 40px;
+}
+
+.phone-content .am-search-input input[type="search"] {
+    height: 40px;
+}
+
+.phone-logo {
+    width: 48px;
+    height: 48px;
+}
+
+.logo-box {
+    text-align: center;
+    margin-top: 50px;
+    margin-bottom: 100px;
+}
