@@ -7,7 +7,7 @@ const Brief = Item.Brief;
 
 class About extends Component {
 	download = () => {
-		window.location.href = 'https://mp.weixin.qq.com/s/XyWuc3ahCBNdvaPyw7OG4A'
+		window.location.href = 'https://nano.nebulas.io/'
 	}
 
 	render() {
@@ -23,7 +23,8 @@ class About extends Component {
 						<Brief>Token Master为发现优质区块链项目而生，
 							<br />去中心化，人人都可以推荐项目，
 							<br />根据社区共识进行排名，
-							<br />人人都可以参与项目分析。
+							<br />人人都可以参与项目分析，进行价值投资。
+							<br/>远离空气项目。
 						</Brief>
 					</Item>
 					<Item

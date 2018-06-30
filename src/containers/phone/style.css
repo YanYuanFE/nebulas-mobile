@@ -1,5 +1,5 @@
 .phone-content {
-    background-color: #dfdfdf;
+    background-color: #2196f3;
     height: calc(100% - 45px);
 }
 
@@ -33,4 +33,21 @@
     text-align: center;
     margin-top: 50px;
     margin-bottom: 100px;
+}
+
+.phone-title {
+    color: #FFF;
+    text-align: center;
+}
+
+.phone-content .am-search-cancel {
+    color: #FFF;
+}
+
+.phone-content .footer{
+    color: #FFF;
+    text-align: center;
+    position: fixed;
+    bottom: 20px;
+    width: 100%;
 }

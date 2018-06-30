@@ -1,14 +1,11 @@
 import React, { Component } from 'react';
 import { SearchBar, ActivityIndicator, NavBar, WhiteSpace, WingBlank, Card } from 'antd-mobile';
 import Nebulas from 'nebulas';
-// import Home from './home';
-// import List from './list';
-// import About from './about';
 import './style.css';
-import phoneIcon from '../../assets/phone.svg';
+import phoneIcon from '../../assets/safe.png';
 import phoneEditIcon from '../../assets/phone-edit.svg';
 import phoneMoreIcon from '../../assets/more.svg';
-import bgImg from '../../assets/render_security_02.gif';
+// import bgImg from '../../assets/render_security_02.gif';
 
 import {Toast} from "antd-mobile/lib/index";
 
@@ -31,35 +28,6 @@ export default class Phone extends Component {
 
 	componentDidMount() {
 		this.switchNet(this.net);
-		// this.getTokenList();
-	}
-
-	getTokenList = () => {
-		const from = Account.NewAccount().getAddressString();
-		const value = '0';
-		const nonce = '0';
-		const gasPrice = '1000000';
-		const gasLimit = '2000000';
-		const callFunc = 'list';
-		const callArgs = '';
-		const contract = {
-			function: callFunc,
-			args: callArgs
-		};
-		this.toggleToast(true, '正在从区块链上获取数据，请稍等！');
-		neb.api.call(from, this.dappAddress, value, nonce, gasPrice, gasLimit, contract).then((res) => {
-			let result = res.result;
-			if (result === 'null') {
-				this.result = [];
-				return;
-			}
-			result = JSON.parse(result);
-			this.setState({list: result});
-			this.toggleToast(false);
-		}).catch(err => {
-			Toast.fail(`error:${err}，请重试`, 2);
-			this.toggleToast(false);
-		});
 	}
 
 	switchNet = (value) => {
@@ -74,8 +42,16 @@ export default class Phone extends Component {
 		this.setState({ phone });
 	};
 
+	goPlan = () => {
+		window.location.href = 'https://nebulas.io/cn/incentive.html'
+	}
+
 	handleSearch = () => {
 		const {phone} = this.state;
+		if (!phone) {
+			Toast.fail('请输入号码', 2);
+			return;
+		}
 		const from = Account.NewAccount().getAddressString();
 		const value = '0';
 		const nonce = '0';
@@ -118,12 +94,14 @@ export default class Phone extends Component {
 					icon={<img src={phoneEditIcon} alt=""/>}
 					rightContent={<img src={phoneMoreIcon} alt="" onClick={() => this.props.history.push('/phone/list')}/>}
 					onLeftClick={() => this.props.history.push('/phone/edit')}
-				>号码卫士</NavBar>
+				>NAS号码卫士</NavBar>
 				<div className="phone-content">
 					<WhiteSpace />
 					<div className="logo-box">
 						<img src={phoneIcon} alt="" className="phone-logo"/>
 					</div>
+					<WhiteSpace />
+						<h2 className="phone-title">去中心化的号码标记工具</h2>
 					<WhiteSpace />
 					<SearchBar
 						value={phone}
@@ -151,6 +129,11 @@ export default class Phone extends Component {
 							<WhiteSpace size="lg" />
 						</WingBlank> : null
 					}
+					<WhiteSpace />
+						<WingBlank size="lg">
+							<h4 onClick={this.goPlan} className="footer">星云激励计划</h4>
+						</WingBlank>
+					<WhiteSpace />
 				</div>
 			</div>
 		);
