@@ -66,6 +66,7 @@ class phoneList extends Component {
 
 	render() {
 		const {list, animating, message} = this.state;
+		console.log(list)
 		return (
 			<div>
 				<NavBar
@@ -80,14 +81,14 @@ class phoneList extends Component {
 				/>
 				<List className="my-list">
 					{
-						list && list.map((item, index) => {
+						list && list.filter(item => item).map((item, index) => {
 							return <Item
 								multipleLine
 								onClick={() => this.goDetail(item)}
-								key={item.phone}
+								key={item && item.phone}
 							>
-								{index + 1}、{item.phone}
-								<Brief>{item.type.join('、')}</Brief>
+								{index + 1}、{item && item.phone}
+								<Brief>{item && item.type.join('、')}</Brief>
 							</Item>
 						})
 					}
