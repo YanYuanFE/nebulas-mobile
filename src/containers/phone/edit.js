@@ -70,7 +70,7 @@ class PhoneEdit extends Component {
 			console.log(error, values);
 			if (!error) {
 				const {phone, type, description} = values;
-				if(!(/^1[0-9][0-9]\d{2,8}$/.test(phone))){
+				if(!(/^[0-9][0-9][0-9]\d{2,8}$/.test(phone))){
 					Toast.fail('请输入正确的号码', 1);
 					return false;
 				}
@@ -85,7 +85,7 @@ class PhoneEdit extends Component {
 					this.toggleToast(true, '正在查询交易，请稍等！');
 				}, () => {
 					this.toggleToast(false, '');
-					Toast.success('操作成功 !!!', 1);
+					Toast.success('号码标记成功', 1);
 					this.props.form.resetFields();
 				})
 			}

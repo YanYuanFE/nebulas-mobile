@@ -30,7 +30,7 @@ class App extends Component {
 		    <p>检测到你在微信内打开</p>
 		    <p>为保证正常使用，请点击右上角选择在浏览器打开！</p>
 	    </div>, [
-		    { text: 'Ok', onPress: () => console.log('ok') },
+		    { text: 'OK', onPress: () => console.log('ok') },
 	    ])
     }
   }

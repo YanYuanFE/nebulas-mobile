@@ -48,7 +48,11 @@ class phoneList extends Component {
 				return;
 			}
 			result = JSON.parse(result);
-			this.setState({list: result});
+			const list = result.filter(item => item).map(item => ({
+				...item,
+				type: Array.from(new Set(item.type))
+			}));
+			this.setState({list});
 			this.toggleToast(false);
 		}).catch(err => {
 			Toast.fail(`error:${err}，请重试`, 2);
