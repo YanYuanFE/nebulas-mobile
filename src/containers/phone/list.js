@@ -88,7 +88,6 @@ class phoneList extends Component {
 						list && list.filter(item => item).map((item, index) => {
 							return <Item
 								multipleLine
-								onClick={() => this.goDetail(item)}
 								key={item && item.phone}
 							>
 								{index + 1}、{item && item.phone}
